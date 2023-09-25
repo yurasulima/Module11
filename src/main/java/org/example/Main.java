@@ -1,10 +1,9 @@
 package org.example;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Main {
@@ -57,51 +56,29 @@ public class Main {
     public static Stream<Long> linearCongruentialGenerator(long a, long c, long m, long seed) {
         return Stream.iterate(seed, x -> (a * x + c) % m);
     }
+
     public static String sortNumbers(String[] array) {
-        List<Integer> numbers = new ArrayList<>();
-
-        for (String str : array) {
-            String[] parts = str.split(", ");
-            for (String part : parts) {
-                try {
-                    int num = Integer.parseInt(part.trim());
-                    numbers.add(num);
-                } catch (NumberFormatException ignored) {
-                }
-            }
-        }
-
-        Collections.sort(numbers);
-
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < numbers.size(); i++) {
-            result.append(numbers.get(i));
-            if (i < numbers.size() - 1) {
-                result.append(", ");
-            }
-        }
-
-        return result.toString();
+        return Arrays.stream(array)
+                .flatMap(s -> Arrays.stream(s.split(", ")))
+                .map(Integer::parseInt)
+                .sorted()
+                .map(String::valueOf)
+                .collect(Collectors.joining(", "));
     }
-    public static ArrayList<String> sortAndUpperCase(ArrayList<String> strings) {
-        for (int i = 0; i < strings.size(); i++) {
-            strings.set(i, strings.get(i).toUpperCase());
-        }
-        strings.sort(Collections.reverseOrder());
-        return strings;
+
+
+    public static List<String> sortAndUpperCase(ArrayList<String> strings) {
+        return strings.stream()
+                .map(String::toUpperCase)
+                .sorted((s1, s2) -> s2.compareTo(s1))
+                .collect(Collectors.toList());
     }
 
 
     public static String getNames(ArrayList<String> names) {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < names.size(); i++) {
-            if (i % 2 == 0) {
-                result.append((i + 1)).append(". ").append(names.get(i)).append(", ");
-            }
-        }
-        if (!result.isEmpty()) {
-            result.delete(result.length() - 2, result.length()); // видаляємо останню кому та пробіл
-        }
-        return result.toString();
+        return IntStream.range(0, names.size())
+                .filter(i -> i % 2 == 0)
+                .mapToObj(i -> (i + 1) + ". " + names.get(i))
+                .collect(Collectors.joining(", "));
     }
 }
